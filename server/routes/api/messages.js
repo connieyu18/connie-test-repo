@@ -31,13 +31,14 @@ router.post("/", async (req, res, next) => {
       if (onlineUsers.includes(sender.id)) {
         sender.online = true;
       }
+    } else {
+      const message = await Message.create({
+        senderId,
+        text,
+        conversationId: conversation.id,
+      });
+      res.json({ message, sender });
     }
-    const message = await Message.create({
-      senderId,
-      text,
-      conversationId: conversation.id,
-    });
-    res.json({ message, sender });
   } catch (error) {
     next(error);
   }
