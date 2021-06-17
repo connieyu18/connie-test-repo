@@ -68,7 +68,8 @@ router.post("/login", async (req, res, next) => {
         { expiresIn: 86400 }
       );
 
-      res.cookie("token", token, { httpOnly: true }); //httpOnly: true setting means that the cookie can’t be read using JavaScript but can still be sent back to the server in HTTP requests.
+      //httpOnly: true setting means that the cookie can’t be read using JavaScript but can still be sent back to the server in HTTP requests.
+      res.cookie("token", token, { httpOnly: true });
 
       res.json({
         ...user.dataValues,
