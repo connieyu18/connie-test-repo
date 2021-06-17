@@ -1,10 +1,11 @@
 import React from "react";
-import { Box, Typography } from "@material-ui/core";
+import { Box, Typography, Badge } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
+    alignItems: "center",
     justifyContent: "space-between",
     marginLeft: 20,
     flexGrow: 1,
@@ -19,18 +20,11 @@ const useStyles = makeStyles((theme) => ({
     letterSpacing: -0.17,
   },
   notification: {
-    height: 20,
-    width: 20,
     backgroundColor: "#3F92FF",
-    marginRight: 10,
+    marginRight: 20,
     color: "white",
     fontSize: 10,
-    letterSpacing: -0.5,
     fontWeight: "bold",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 10,
   },
 }));
 
@@ -50,6 +44,7 @@ const ChatContent = (props) => {
           {latestMessageText}
         </Typography>
       </Box>
+      <Badge classes={{ badge: `${classes.notification}` }} badgeContent={4} />
     </Box>
   );
 };
