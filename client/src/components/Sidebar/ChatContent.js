@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Typography, Badge } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -31,8 +31,16 @@ const useStyles = makeStyles((theme) => ({
 const ChatContent = (props) => {
   const classes = useStyles();
 
-  const { conversation } = props;
-  const { latestMessageText, otherUser } = conversation;
+  const { conversation, activeConversation } = props;
+  const { latestMessageText, otherUser, messages } = conversation;
+
+  //get all unread message for all chats except the current active user
+  const unReadMessages = messages.filter(
+    (message) =>
+      message.isRead === false &&
+      message.senderId === otherUser.id &&
+      activeConversation != otherUser.username
+  ).length;
 
   return (
     <Box className={classes.root}>
@@ -44,7 +52,10 @@ const ChatContent = (props) => {
           {latestMessageText}
         </Typography>
       </Box>
-      <Badge classes={{ badge: `${classes.notification}` }} badgeContent={4} />
+      <Badge
+        classes={{ badge: `${classes.notification}` }}
+        badgeContent={unReadMessages}
+      />
     </Box>
   );
 };
