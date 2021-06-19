@@ -66,7 +66,6 @@ router.post("/", async (req, res, next) => {
       conversationId: conversation.id,
     });
     res.json({ message, sender });
-    return;
   } catch (error) {
     next(error);
   }
