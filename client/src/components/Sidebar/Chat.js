@@ -26,14 +26,10 @@ class Chat extends Component {
   getPreviousChatConvo = async () => {
     for (let convo of this.props.conversations) {
       if (convo.otherUser.username === this.props.activeConversation) {
-        let unreadMsgCount = 0;
         for (let message of convo.messages) {
           if (message.isRead == false) {
-            unreadMsgCount++;
+            await this.props.readMessage(convo.otherUser.id, convo.id);
           }
-        }
-        if (unreadMsgCount > 0) {
-          await this.props.readMessage(convo.otherUser.id, convo.id);
         }
       }
     }

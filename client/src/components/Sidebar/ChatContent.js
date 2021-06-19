@@ -52,10 +52,12 @@ const ChatContent = (props) => {
           {latestMessageText}
         </Typography>
       </Box>
-      <Badge
-        classes={{ badge: `${classes.notification}` }}
-        badgeContent={unReadMessages}
-      />
+      {unReadMessages > 0 && (
+        <Badge
+          classes={{ badge: `${classes.notification}` }}
+          badgeContent={unReadMessages}
+        />
+      )}
     </Box>
   );
 };
