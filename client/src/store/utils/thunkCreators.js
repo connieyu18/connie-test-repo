@@ -50,6 +50,7 @@ export const login = (credentials) => async (dispatch) => {
 export const logout = (id) => async (dispatch) => {
   try {
     await axios.delete("/auth/logout");
+    delete axios.defaults.headers.post["X-CSRF-Token"];
     dispatch(gotUser({}));
     socket.emit("logout", id);
   } catch (error) {
