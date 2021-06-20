@@ -26,17 +26,22 @@ const ActiveChat = (props) => {
   const { user } = props;
   const conversation = props.conversation || {};
 
-  //Add 'allMessagesCount' to UseEffect param to check for any new messages while active. This is not efficient, because it will keep calling the "read-message" api to backend whenever there's a new message.
-  // const allMessagesCount = conversation.messages
-  //   ? conversation.messages.length
-  //   : 0;
+  // Set messages in conversation isRead to be true if there are any unread messages
+  const setUnreadMessagesToBeRead = async () => {
+    if (!conversation || !conversation.id) return;
 
-  useEffect(async () => {
-    //when component is loaded, then set all unread messages to read
-    conversation &&
-      conversation.id &&
-      (await props.readMessage(conversation.otherUser.id, conversation.id));
-  }, [conversation.messages]);
+    for (let message of conversation.messages) {
+      if (message.isRead == false) {
+        // Set conversation to be read as long as at least 1 message is unread
+        await props.readMessage(conversation.otherUser.id, conversation.id);
+        return;
+      }
+    }
+  };
+
+  useEffect(() => {
+    setUnreadMessagesToBeRead();
+  }, [conversation]);
 
   return (
     <Box className={classes.root}>
