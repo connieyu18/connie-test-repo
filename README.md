@@ -15,6 +15,7 @@ npm install
 // seed the database
 npm run seed
 
+
 npm run dev
 ```
 
