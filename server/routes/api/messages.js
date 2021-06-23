@@ -1,13 +1,16 @@
 const router = require("express").Router();
 const { Conversation, Message } = require("../../db/models");
 const onlineUsers = require("../../onlineUsers");
+const authentication = require("../../util/authentication");
 
 // expects {recipientId, text, conversationId } in body (conversationId will be null if no conversation exists yet)
 router.post("/", async (req, res, next) => {
   try {
-    if (!req.user) {
+    // check cookie for auth and req for the correct user id declared
+    if (authentication.isRouteAuthenticated(req) === null) {
       return res.sendStatus(401);
     }
+
     const senderId = req.user.id;
     const { recipientId, text, conversationId, sender } = req.body;
 
