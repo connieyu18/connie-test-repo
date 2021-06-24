@@ -24,6 +24,18 @@ const styles = {
 class Chat extends Component {
   handleClick = async (conversation) => {
     await this.props.setActiveChat(conversation.otherUser.username);
+    await this.setUnreadMessagesToBeRead();
+  };
+
+  setUnreadMessagesToBeRead = () => {
+    if (!this.props.conversation || !this.props.conversation.id) return;
+    if (this.props.conversation.unreadMessagesCount > 0) {
+      this.props.readMessage(
+        this.props.conversation.otherUser.id,
+        this.props.conversation.id
+      );
+    }
+    return;
   };
 
   render() {

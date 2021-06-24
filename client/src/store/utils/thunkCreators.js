@@ -115,11 +115,10 @@ export const readMessage = (otherUserId, conversationId) => async (
   dispatch
 ) => {
   try {
-    const res = await axios.put("/api/messages/read", {
+    await axios.put("/api/messages/read", {
       otherUserId,
       conversationId,
     });
-    console.log("ress", res);
     dispatch(setReadMessage(otherUserId, conversationId));
   } catch (error) {
     console.error(error);

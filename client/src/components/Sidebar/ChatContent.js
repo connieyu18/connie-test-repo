@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
+import { connect } from "react-redux";
 import { Box, Typography, Badge } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { fetchConversations } from "../../store/utils/thunkCreators";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,15 +34,11 @@ const ChatContent = (props) => {
   const classes = useStyles();
 
   const { conversation, activeConversation } = props;
-  const { latestMessageText, otherUser, messages } = conversation;
+  const { latestMessageText, otherUser, unreadMessagesCount } = conversation;
 
-  //get all unread message for all chats except the current active user
-  const unReadMessages = messages.filter(
-    (message) =>
-      message.isRead === false &&
-      message.senderId === otherUser.id &&
-      activeConversation != otherUser.username
-  ).length;
+  useEffect(async () => {
+    await props.fetchConversations();
+  }, [latestMessageText]);
 
   return (
     <Box className={classes.root}>
@@ -52,14 +50,23 @@ const ChatContent = (props) => {
           {latestMessageText}
         </Typography>
       </Box>
-      {unReadMessages > 0 && (
-        <Badge
-          classes={{ badge: `${classes.notification}` }}
-          badgeContent={unReadMessages}
-        />
-      )}
+      {activeConversation !== conversation.otherUser.username &&
+        unreadMessagesCount > 0 && (
+          <Badge
+            classes={{ badge: `${classes.notification}` }}
+            badgeContent={unreadMessagesCount}
+          />
+        )}
     </Box>
   );
 };
 
-export default ChatContent;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    fetchConversations: () => {
+      dispatch(fetchConversations());
+    },
+  };
+};
+
+export default connect(null, mapDispatchToProps)(ChatContent);

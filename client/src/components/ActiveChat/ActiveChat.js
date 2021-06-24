@@ -26,23 +26,6 @@ const ActiveChat = (props) => {
   const { user } = props;
   const conversation = props.conversation || {};
 
-  // Set messages in conversation isRead to be true if there are any unread messages
-  const setUnreadMessagesToBeRead = async () => {
-    if (!conversation || !conversation.id) return;
-
-    for (let message of conversation.messages) {
-      if (message.isRead == false) {
-        // Set conversation to be read as long as at least 1 message is unread
-        await props.readMessage(conversation.otherUser.id, conversation.id);
-        return;
-      }
-    }
-  };
-
-  useEffect(() => {
-    setUnreadMessagesToBeRead();
-  }, [conversation]);
-
   return (
     <Box className={classes.root}>
       {conversation.otherUser && (
@@ -81,12 +64,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    readMessage: (otherUserId, conversationId) => {
-      dispatch(readMessage(otherUserId, conversationId));
-    },
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(ActiveChat);
+export default connect(mapStateToProps, null)(ActiveChat);
