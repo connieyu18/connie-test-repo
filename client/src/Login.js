@@ -1,18 +1,24 @@
 import React from "react";
-import { Redirect, useHistory } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import {
   Grid,
-  Box,
-  Typography,
-  Button,
   FormControl,
+  Button,
   TextField,
+  makeStyles,
 } from "@material-ui/core";
+import AuthSection from "./components/Auth/AuthSection";
 import { login } from "./store/utils/thunkCreators";
 
+const useStyles = makeStyles((theme) => ({
+  formControl: {
+    width: "100%",
+  },
+}));
+
 const Login = (props) => {
-  const history = useHistory();
+  const classes = useStyles();
   const { user, login } = props;
 
   const handleLogin = async (event) => {
@@ -28,41 +34,58 @@ const Login = (props) => {
   }
 
   return (
-    <Grid container justify="center">
-      <Box>
-        <Grid container item>
-          <Typography>Need to register?</Typography>
-          <Button onClick={() => history.push("/register")}>Register</Button>
+    <AuthSection
+      CtaHeaderText={"Don't have an account?"}
+      routeAfter={"/register"}
+      CtaHeaderButtonName={"Create account"}
+      headerText={"Welcome back!"}
+      SubmitBtnName={"Login"}
+    >
+      <form onSubmit={handleLogin}>
+        <Grid>
+          <FormControl margin="normal" required className={classes.formControl}>
+            <TextField
+              fullWidth
+              aria-label="username"
+              label="Username"
+              name="username"
+              type="text"
+              style={{ margin: 8, color: "#B0B0B0" }}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </FormControl>
         </Grid>
-        <form onSubmit={handleLogin}>
-          <Grid>
-            <Grid>
-              <FormControl margin="normal" required>
-                <TextField
-                  aria-label="username"
-                  label="Username"
-                  name="username"
-                  type="text"
-                />
-              </FormControl>
-            </Grid>
-            <FormControl margin="normal" required>
-              <TextField
-                label="password"
-                aria-label="password"
-                type="password"
-                name="password"
-              />
-            </FormControl>
-            <Grid>
-              <Button type="submit" variant="contained" size="large">
-                Login
-              </Button>
-            </Grid>
-          </Grid>
-        </form>
-      </Box>
-    </Grid>
+        <Grid>
+          <FormControl margin="normal" className={classes.formControl} required>
+            <TextField
+              fullWidth
+              label="password"
+              aria-label="password"
+              type="password"
+              name="password"
+              style={{ margin: 8, color: "#B0B0B0" }}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </FormControl>
+        </Grid>
+        <Grid>
+          <Button
+            type="submit"
+            variant="contained"
+            size="large"
+            color="primary"
+            id="cta-btn"
+            className="custom-button"
+          >
+            Login
+          </Button>
+        </Grid>
+      </form>
+    </AuthSection>
   );
 };
 
