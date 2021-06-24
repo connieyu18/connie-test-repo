@@ -93,7 +93,6 @@ export const postMessage = (body) => (dispatch) => {
     } else {
       dispatch(setNewMessage(data.message));
     }
-
     sendMessage(data, body);
   } catch (error) {
     console.error(error);

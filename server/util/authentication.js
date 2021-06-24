@@ -24,13 +24,13 @@ const isRouteAuthenticated = (req) => {
 const isTokenValid = (token) => {
   try {
     let decoded = jwt.verify(token, process.env.SESSION_SECRET);
-    console.log("dcc", decoded);
     return decoded;
   } catch (err) {
-    console.error(err);
     return null;
   }
 };
 
-exports.isRouteAuthenticated = isRouteAuthenticated;
-exports.isTokenValid = isTokenValid;
+module.exports = {
+  isRouteAuthenticated,
+  isTokenValid,
+};
