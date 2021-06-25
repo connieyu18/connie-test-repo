@@ -35,6 +35,7 @@ const server = http.createServer(app);
 const io = require("socket.io")(server);
 
 io.use(function (socket, next) {
+  console.log("socket", socket);
   if (!socket.request.headers || !socket.request.headers.cookie) {
     next(new Error("Authentication error"));
     return;
@@ -68,6 +69,11 @@ io.use(function (socket, next) {
 
     // send the user who just went online to everyone else who is already online
     socket.broadcast.emit("add-online-user", id);
+  });
+
+  // create an unique room for that user
+  socket.on("join", function (data) {
+    socket.join(data.email); // We are using room of socket io
   });
 
   socket.on("new-message", (data) => {
