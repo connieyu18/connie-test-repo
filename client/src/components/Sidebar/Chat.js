@@ -3,7 +3,10 @@ import { Box } from "@material-ui/core";
 import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { withStyles } from "@material-ui/core/styles";
 import { setActiveChat } from "../../store/activeConversation";
-import { readMessage } from "../../store/utils/thunkCreators";
+import {
+  readMessage,
+  fetchConversations,
+} from "../../store/utils/thunkCreators";
 
 import { connect } from "react-redux";
 
@@ -25,6 +28,7 @@ class Chat extends Component {
   handleClick = async (conversation) => {
     await this.props.setActiveChat(conversation.otherUser.username);
     await this.setUnreadMessagesToBeRead();
+    await this.props.fetchConversations();
   };
 
   setUnreadMessagesToBeRead = () => {
@@ -69,6 +73,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     readMessage: (otherUserId, conversationId) => {
       dispatch(readMessage(otherUserId, conversationId));
+    },
+    fetchConversations: () => {
+      dispatch(fetchConversations());
     },
   };
 };

@@ -2,7 +2,10 @@ import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { Box, Typography, Badge } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { fetchConversations } from "../../store/utils/thunkCreators";
+import {
+  fetchConversations,
+  readMessage,
+} from "../../store/utils/thunkCreators";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,10 +38,38 @@ const ChatContent = (props) => {
 
   const { conversation, activeConversation } = props;
   const { latestMessageText, otherUser, unreadMessagesCount } = conversation;
+  console.log("props", unreadMessagesCount);
+  const setUnreadMessagesToBeRead = () => {
+    if (!props.conversation || !props.conversation.id) return;
+    readMessage(props.conversation.otherUser.id, props.conversation.id);
+    return;
+  };
 
-  useEffect(async () => {
-    await props.fetchConversations();
-  }, [latestMessageText]);
+  useEffect(() => {
+    if (
+      unreadMessagesCount > 0 &&
+      activeConversation === conversation.otherUser.username
+    ) {
+      console.log(activeConversation, conversation.otherUser.username);
+      setUnreadMessagesToBeRead();
+    }
+    async function fetchData() {
+      await props.fetchConversations();
+    }
+    fetchData();
+  }, [latestMessageText, unreadMessagesCount]);
+
+  //   useEffect(() => {
+  //     (async () => {
+  //       const products = await api.index()
+  //       setFilteredProducts(products)
+  //       setProducts(products)
+  //     })()
+  //
+  //     return () => {
+  //       unsubscribeOrRemoveEventHandler() // 👍
+  //     }
+  //   }, [])
 
   return (
     <Box className={classes.root}>
@@ -50,8 +81,8 @@ const ChatContent = (props) => {
           {latestMessageText}
         </Typography>
       </Box>
-      {activeConversation !== conversation.otherUser.username &&
-        unreadMessagesCount > 0 && (
+      {unreadMessagesCount > 0 &&
+        activeConversation !== conversation.otherUser.username && (
           <Badge
             classes={{ badge: `${classes.notification}` }}
             badgeContent={unreadMessagesCount}
@@ -65,6 +96,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     fetchConversations: () => {
       dispatch(fetchConversations());
+    },
+    readMessage: (otherUserId, conversationId) => {
+      dispatch(readMessage(otherUserId, conversationId));
     },
   };
 };

@@ -70,6 +70,7 @@ const mapStateToProps = (state) => {
   return {
     user: state.user,
     conversations: state.conversations,
+    activeConversation: state.activeConversation,
   };
 };
 
