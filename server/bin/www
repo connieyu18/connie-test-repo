@@ -34,9 +34,12 @@ const server = http.createServer(app);
 
 const io = require("socket.io")(server);
 
-io.use(function (socket, next) {
+// on a new connection
+io.on("connection", (socket) => {
+  // Do authentication checks
   if (!socket.request.headers || !socket.request.headers.cookie) {
-    next(new Error("Authentication error"));
+    console.error("Socket: Authentication error: header invalid");
+    socket.disconnect(true);
     return;
   }
 
@@ -44,21 +47,27 @@ io.use(function (socket, next) {
 
   // error if token does not exist in header
   if (!cookies || !cookies.token) {
-    next(new Error("Authentication error"));
+    console.error("Socket: Authentication error: cookie invalid");
+    socket.disconnect(true);
     return;
   }
 
   let decodedToken = authentication.isTokenValid(cookies.token);
   if (decodedToken === null) {
-    next(new Error("Authentication error"));
+    console.error("Socket: Authentication error: token invalid");
+    socket.disconnect(true);
     return;
   }
+
+  // authentication valid, store token
   socket.decodedToken = decodedToken;
-}).on("connection", (socket) => {
+
+  // bind callbacks after authentication passed
   socket.on("go-online", (id) => {
     // validate that the id belongs to logged-in user
-    if (!socket.decoded || socket.decoded.id !== id) {
-      next(new Error("Not Authorized"));
+    if (!socket.decodedToken || socket.decodedToken.id !== id) {
+      console.error("Socket: Not Authorized: ", socket.decodedToken);
+      socket.disconnect(true);
       return;
     }
 
@@ -79,8 +88,9 @@ io.use(function (socket, next) {
 
   socket.on("logout", (id) => {
     // validate that the id belongs to logged-in user
-    if (!socket.decoded || socket.decoded.id !== id) {
-      next(new Error("Not Authorized"));
+    if (!socket.decodedToken || socket.decodedToken.id !== id) {
+      console.error("Socket: Not Authorized: ", socket.decodedToken);
+      socket.disconnect(true);
       return;
     }
 
