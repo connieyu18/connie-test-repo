@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme) => ({
     color: "#9CADC8",
     letterSpacing: -0.17,
   },
+  boldText: { fontWeight: "bold" },
   notification: {
     backgroundColor: "#3F92FF",
     marginRight: 20,
@@ -38,38 +39,13 @@ const ChatContent = (props) => {
 
   const { conversation, activeConversation } = props;
   const { latestMessageText, otherUser, unreadMessagesCount } = conversation;
-  console.log("props", unreadMessagesCount);
-  const setUnreadMessagesToBeRead = () => {
-    if (!props.conversation || !props.conversation.id) return;
-    readMessage(props.conversation.otherUser.id, props.conversation.id);
-    return;
-  };
 
   useEffect(() => {
-    if (
-      unreadMessagesCount > 0 &&
-      activeConversation === conversation.otherUser.username
-    ) {
-      console.log(activeConversation, conversation.otherUser.username);
-      setUnreadMessagesToBeRead();
-    }
     async function fetchData() {
       await props.fetchConversations();
     }
     fetchData();
-  }, [latestMessageText, unreadMessagesCount]);
-
-  //   useEffect(() => {
-  //     (async () => {
-  //       const products = await api.index()
-  //       setFilteredProducts(products)
-  //       setProducts(products)
-  //     })()
-  //
-  //     return () => {
-  //       unsubscribeOrRemoveEventHandler() // 👍
-  //     }
-  //   }, [])
+  }, [latestMessageText]);
 
   return (
     <Box className={classes.root}>
@@ -77,7 +53,14 @@ const ChatContent = (props) => {
         <Typography className={classes.username}>
           {otherUser.username}
         </Typography>
-        <Typography className={classes.previewText}>
+        <Typography
+          className={`classes.previewText ${
+            unreadMessagesCount > 0 &&
+            activeConversation !== conversation.otherUser.username
+              ? classes.boldText
+              : ""
+          }`}
+        >
           {latestMessageText}
         </Typography>
       </Box>

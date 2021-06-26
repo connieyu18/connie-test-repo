@@ -29,7 +29,11 @@ export const setReadMessageToStore = (state, payload) => {
   return state.map((convo) => {
     if (convo.id === conversationId && convo.otherUser.id === otherUserId) {
       const convoCopy = { ...convo };
-      convoCopy.messages.forEach((message) => (message.isRead = true));
+      convoCopy.messages.forEach((message) => {
+        if (message.isRead === false) {
+          message.isRead = true;
+        }
+      });
       return convoCopy;
     } else {
       return convo;

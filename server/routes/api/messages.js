@@ -91,7 +91,7 @@ router.put("/read", (req, res, next) => {
       },
     }
   )
-    .then(function (rowsUpdated) {
+    .then((rowsUpdated) => {
       res.json(rowsUpdated);
     })
     .catch((error) => {
