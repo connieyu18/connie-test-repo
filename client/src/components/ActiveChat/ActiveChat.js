@@ -23,7 +23,7 @@ const useStyles = makeStyles(() => ({
     justifyContent: "space-between",
   },
   messageContainer: {
-    height: "500px",
+    height: "620px",
     overflow: "scroll",
   },
 }));
