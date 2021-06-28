@@ -17,7 +17,7 @@ class OnlineUsers {
 
   // returns true if added, false if not added
   addUser(userId, socketId) {
-    if (this.includes(userId)) return false;
+    if (this.users.includes(userId)) return false;
     this.users[userId] = {
       socketId: socketId,
     };
@@ -27,10 +27,12 @@ class OnlineUsers {
   // returns the user structure
   // null if it does not exist
   getUser(userId) {
-    if (this.includes(userId)) {
-      return this.users[userId];
+    if (this.user.includes(userId)) {
+      if (this.users.includes(userId)) {
+        return this.users[userId];
+      }
+      return null;
     }
-    return null;
   }
 
   delete(userId) {
