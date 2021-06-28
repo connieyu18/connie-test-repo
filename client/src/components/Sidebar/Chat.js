@@ -3,10 +3,7 @@ import { Box } from "@material-ui/core";
 import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { withStyles } from "@material-ui/core/styles";
 import { setActiveChat } from "../../store/activeConversation";
-import {
-  readMessage,
-  fetchConversations,
-} from "../../store/utils/thunkCreators";
+import { readMessage } from "../../store/utils/thunkCreators";
 
 import { connect } from "react-redux";
 
@@ -72,9 +69,6 @@ const mapDispatchToProps = (dispatch) => {
     },
     readMessage: (otherUserId, conversationId) => {
       dispatch(readMessage(otherUserId, conversationId));
-    },
-    fetchConversations: () => {
-      dispatch(fetchConversations());
     },
   };
 };
