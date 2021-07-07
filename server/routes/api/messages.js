@@ -3,6 +3,7 @@ const { Conversation, Message } = require("../../db/models");
 const onlineUsers = require("../../onlineUsers");
 const authentication = require("../../util/authentication");
 
+
 // expects {recipientId, text, conversationId } in body (conversationId will be null if no conversation exists yet)
 router.post("/", async (req, res, next) => {
   try {
@@ -12,7 +13,7 @@ router.post("/", async (req, res, next) => {
     }
 
     const senderId = req.user.id;
-    const { recipientId, text, conversationId, sender } = req.body;
+    const { recipientId, text, conversationId, sender, isRead } = req.body;
 
     // if we already know conversation id, we can save time and just add it to message and return
     if (conversationId) {
@@ -39,6 +40,7 @@ router.post("/", async (req, res, next) => {
           senderId,
           text,
           conversationId,
+          isRead,
         });
         return res.json({ message, sender });
       }
@@ -67,11 +69,36 @@ router.post("/", async (req, res, next) => {
       senderId,
       text,
       conversationId: conversation.id,
+      isRead,
     });
     res.json({ message, sender });
   } catch (error) {
     next(error);
   }
+});
+
+router.put("/read", (req, res, next) => {
+  if (!req.user) {
+    return res.sendStatus(401);
+  }
+  const { otherUserId, conversationId } = req.body;
+  //update messages' read status to true if correct senderID and conversationID
+  Message.update(
+    { isRead: true },
+    {
+      where: {
+        senderId: otherUserId,
+        conversationId: conversationId,
+        isRead: false,
+      },
+    }
+  )
+    .then((rowsUpdated) => {
+      res.json(rowsUpdated);
+    })
+    .catch((error) => {
+      next(error);
+    });
 });
 
 module.exports = router;

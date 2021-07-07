@@ -3,6 +3,8 @@ import { Box } from "@material-ui/core";
 import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { withStyles } from "@material-ui/core/styles";
 import { setActiveChat } from "../../store/activeConversation";
+import { readMessage } from "../../store/utils/thunkCreators";
+
 import { connect } from "react-redux";
 
 const styles = {
@@ -22,11 +24,24 @@ const styles = {
 class Chat extends Component {
   handleClick = async (conversation) => {
     await this.props.setActiveChat(conversation.otherUser.username);
+    await this.setUnreadMessagesToBeRead();
+  };
+
+  setUnreadMessagesToBeRead = () => {
+    if (!this.props.conversation || !this.props.conversation.id) return;
+    if (this.props.conversation.unreadMessagesCount > 0) {
+      this.props.readMessage(
+        this.props.conversation.otherUser.id,
+        this.props.conversation.id
+      );
+    }
+    return;
   };
 
   render() {
     const { classes } = this.props;
     const otherUser = this.props.conversation.otherUser;
+
     return (
       <Box
         onClick={() => this.handleClick(this.props.conversation)}
@@ -38,7 +53,10 @@ class Chat extends Component {
           online={otherUser.online}
           sidebar={true}
         />
-        <ChatContent conversation={this.props.conversation} />
+        <ChatContent
+          conversation={this.props.conversation}
+          activeConversation={this.props.activeConversation}
+        />
       </Box>
     );
   }
@@ -49,7 +67,20 @@ const mapDispatchToProps = (dispatch) => {
     setActiveChat: (id) => {
       dispatch(setActiveChat(id));
     },
+    readMessage: (otherUserId, conversationId) => {
+      dispatch(readMessage(otherUserId, conversationId));
+    },
   };
 };
 
-export default connect(null, mapDispatchToProps)(withStyles(styles)(Chat));
+const mapStateToProps = (state) => {
+  return {
+    conversations: state.conversations,
+    activeConversation: state.activeConversation,
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(Chat));
