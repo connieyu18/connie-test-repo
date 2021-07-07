@@ -34,9 +34,9 @@ const server = http.createServer(app);
 
 const io = require("socket.io")(server);
 
+
 // on a new connection
 io.on("connection", (socket) => {
-  // Do authentication checks
   if (!socket.request.headers || !socket.request.headers.cookie) {
     console.error("Socket: Authentication error: header invalid");
     socket.disconnect(true);
@@ -77,6 +77,11 @@ io.on("connection", (socket) => {
 
     // send the user who just went online to everyone else who is already online
     socket.broadcast.emit("add-online-user", id);
+  });
+
+  // create an unique room for that user
+  socket.on("join", function (data) {
+    socket.join(data.email); // We are using room of socket io
   });
 
   socket.on("new-message", (data) => {
