@@ -72,7 +72,7 @@ io.on("connection", (socket) => {
     }
 
     if (!onlineUsers.includes(id)) {
-      onlineUsers.push(id);
+      onlineUsers.addUser(id, socket.id);
     }
 
     // send the user who just went online to everyone else who is already online
@@ -80,7 +80,14 @@ io.on("connection", (socket) => {
   });
 
   socket.on("new-message", (data) => {
-    socket.broadcast.emit("new-message", {
+    let user = onlineUsers.getUser(data.recipientId);
+    if (!user || !user.socketId) {
+      console.error("User or user socket does not exist");
+      return;
+    }
+
+    // send to specific user's socket
+    io.to(user.socketId).emit("new-message", {
       message: data.message,
       sender: data.sender,
     });
@@ -95,8 +102,7 @@ io.on("connection", (socket) => {
     }
 
     if (onlineUsers.includes(id)) {
-      userIndex = onlineUsers.indexOf(id);
-      onlineUsers.splice(userIndex, 1);
+      onlineUsers.delete(id);
       socket.broadcast.emit("remove-offline-user", id);
     }
   });
