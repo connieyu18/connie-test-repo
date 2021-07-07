@@ -39,6 +39,7 @@ class Input extends Component {
       recipientId: this.props.otherUser.id,
       conversationId: this.props.conversationId,
       sender: this.props.conversationId ? null : this.props.user,
+      isRead: false,
     };
     await this.props.postMessage(reqBody);
     this.setState({
@@ -69,6 +70,7 @@ const mapStateToProps = (state) => {
   return {
     user: state.user,
     conversations: state.conversations,
+    activeConversation: state.activeConversation,
   };
 };
 
